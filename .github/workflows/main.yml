@@ -59,21 +59,7 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: base
-        run: docker buildx bake base
-
-      - name: prepare
-        run: docker buildx bake prepare
-
-      - name: sanity-check
-        run: docker buildx bake sanity-check
-
-      - name: build
-        run: |
-          docker buildx bake build
-
-      - name: runtime
-        if: github.ref == 'refs/heads/main'
-        run: |
-          docker buildx bake runtime
-          docker push docker.io/lopezator/cache-test:latest
+      - name: build and push
+        uses: docker/bake-action@v5
+        with:
+          push: ${{ github.ref == 'refs/heads/main' }}

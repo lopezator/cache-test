@@ -28,12 +28,11 @@ FROM sanity-check AS build
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
     make go-build
-
-# Build stage: get latest binary.
+# Get latest binary and copy to the $PATH.
 RUN LATEST_BIN=$(ls -t /go/src/github.com/lopezator/cache-test/bin/*linux-amd64 | head -n 1) && \
     chmod 0755 ${LATEST_BIN} && \
     cp ${LATEST_BIN} /usr/local/bin/cache-test
 
 # Runtime stage: Copy binary from build stage.
-FROM gcr.io/distroless/static@sha256:c6d5981545ce1406d33e61434c61e9452dad93ecd8397c41e89036ef977a88f4 AS runtime
+FROM gcr.io/distroless/static@sha256:c6d5981545ce1406d33e61434c61e9452dad93ecd8397c41e89036ef977a88f4 AS release
 CMD ["cache-test"]
